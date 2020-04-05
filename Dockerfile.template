@@ -1,0 +1,54 @@
+FROM debian:stretch-slim
+
+LABEL maintainer="mark.westcott@vivideconomics.com"
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		ed \
+		less \
+		locales \
+		vim-tiny \
+		wget \
+		ca-certificates \
+		fonts-texgyre \
+		gnupg \
+		dirmngr \
+	&& rm -rf /var/lib/apt/lists/*
+
+## Configure default locale
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+	&& locale-gen en_US.utf8 \
+	&& /usr/sbin/update-locale LANG=en_US.UTF-8
+
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+
+RUN echo "deb http://cloud.r-project.org/bin/linux/debian stretch-cran35/" >> /etc/apt/sources.list.d/cran35.list
+
+ENV R_BASE_VERSION %%R_BASE_VERSION%%
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys --recv-keys "E19F5F87128899B192B1A2C2AD5F960A256A04AF"
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		r-base=${R_BASE_VERSION}-* \
+		r-base-dev=${R_BASE_VERSION}-* \
+		r-recommended=${R_BASE_VERSION}-* \
+		littler \
+        r-cran-littler \
+	&& rm -rf /var/lib/apt/lists/*
+
+# system libraries
+
+RUN apt-get update && apt-get install -y \
+    sudo \
+    pandoc \
+    pandoc-citeproc \
+    libcurl4-gnutls-dev \
+    libcairo2-dev \
+    libxt-dev \
+    libssh2-1-dev \
+    libssl-dev
+
+# Extra packages
+RUN R -e "install.packages(c('tidyverse', 'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr'), repos='https://cran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%/')"

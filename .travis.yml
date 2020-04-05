@@ -1,0 +1,15 @@
+language: bash
+services: docker
+
+env:
+  - R_BASE_VERSION=3.6.2 MRAN_SNAPSHOT_DATE=2020-04-01
+
+script:
+  - ./scripts/cibuild
+
+deploy:
+  - provider: script
+    script: "scripts/cipublish"
+    on:
+      repo: vividfinancepg/r-docker
+      branch: master
