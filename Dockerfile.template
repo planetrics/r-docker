@@ -48,7 +48,15 @@ RUN apt-get update && apt-get install -y \
     libcairo2-dev \
     libxt-dev \
     libssh2-1-dev \
-    libssl-dev
+    libssl-dev \
+    libxml2-dev
+
+RUN mkdir -p /usr/local/lib/R/etc/ && \
+    echo \
+	"options(repos = c(CRAN='https://mran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%')" >> /usr/local/lib/R/etc/Rprofile.site
 
 # Extra packages
 RUN R -e "install.packages(c('tidyverse', 'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr'), repos='https://cran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%/')"
+
+CMD ["r"]
+

@@ -19,7 +19,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         usage
     else
         docker \
-            run -d --name r-test -p "quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE"
+            run -d --name r-test "quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" "-e 'cat(pi^2, "\n")'"
 
         docker rm r-test
     fi
