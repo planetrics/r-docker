@@ -53,7 +53,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir -p /usr/local/lib/R/etc/ && \
     echo \
-	"options(repos = c(CRAN='https://mran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%')" >> /usr/local/lib/R/etc/Rprofile.site
+	"options(repos = c(CRAN='https://mran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%'))" >> /usr/lib/R/etc/Rprofile.site
 
 # Extra packages
 RUN R -e "install.packages(c('tidyverse', 'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr'), repos='https://cran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%/')"
