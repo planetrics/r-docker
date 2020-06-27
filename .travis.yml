@@ -3,6 +3,7 @@ services: docker
 
 env:
   - R_BASE_VERSION=3.6.2 MRAN_SNAPSHOT_DATE=2020-04-01
+  - R_BASE_VERSION=3.6.3 MRAN_SNAPSHOT_DATE=2020-06-01
 
 script:
   - ./scripts/cibuild
