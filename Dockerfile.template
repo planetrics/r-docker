@@ -56,7 +56,7 @@ RUN mkdir -p /usr/local/lib/R/etc/ && \
 	"options(repos = c(CRAN='https://mran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%'))" >> /usr/lib/R/etc/Rprofile.site
 
 # Extra packages
-RUN R -e "install.packages(c('tidyverse', 'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr'), repos='https://cran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%/')"
+RUN R -e "install.packages(c('tidyverse', 'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr', 'arrow'), repos='https://cran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%/')"
 
 CMD ["r"]
 
