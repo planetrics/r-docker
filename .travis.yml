@@ -12,5 +12,5 @@ deploy:
   - provider: script
     script: "scripts/cipublish"
     on:
-      repo: vivideconomics/r-docker
+      repo: vividcrt/r-docker
       branch: master
