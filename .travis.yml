@@ -12,5 +12,5 @@ deploy:
   - provider: script
     script: "scripts/cipublish"
     on:
-      repo: vividcrt/r-docker
+      repo: planetrics/r-docker
       branch: master
