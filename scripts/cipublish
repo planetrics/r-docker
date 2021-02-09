@@ -17,7 +17,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         docker \
             login -u "${QUAY_USER}" -p "${QUAY_PASSWORD}" quay.io;
 
+        # Push base image
         docker \
             push "quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE";
+
+        # Push RStudio image
+        docker \
+            push "quay.io/vividfinancepg/r-studio:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE";
     fi
 fi

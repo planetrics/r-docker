@@ -18,9 +18,12 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
+        # Test base image
         docker \
-            run --name r-test "quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" r -e 'print(1)'
+            run --rm --name r-test "quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" r -e 'print(1)'
+        # Test RStudio image
+        docker \
+            run --name r-test "quay.io/vividfinancepg/r-studio:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" r -e 'print(1)'
 
-        docker rm r-test
     fi
 fi

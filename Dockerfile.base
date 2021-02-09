@@ -25,7 +25,13 @@ ENV LANG en_US.UTF-8
 
 RUN echo "deb http://cloud.r-project.org/bin/linux/debian buster-cran35/" >> /etc/apt/sources.list.d/cran35.list
 
-ENV R_BASE_VERSION %%R_BASE_VERSION%%
+ARG MRAN_SNAPSHOT_DATE
+ENV MRAN_SNAPSHOT_DATE $MRAN_SNAPSHOT_DATE
+ARG R_BASE_VERSION
+ENV R_BASE_VERSION $R_BASE_VERSION
+
+# Use prebuilt Arrow binaries if available, otherwise build them
+ENV LIBARROW_BINARY=true
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys --recv-keys "E19F5F87128899B192B1A2C2AD5F960A256A04AF"
 
@@ -53,10 +59,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir -p /usr/local/lib/R/etc/ && \
     echo \
-	"options(repos = c(CRAN='https://mran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%'))" >> /usr/lib/R/etc/Rprofile.site
+	"options(repos = c(CRAN='https://mran.microsoft.com/snapshot/${MRAN_SNAPSHOT_DATE}'))" >> /usr/lib/R/etc/Rprofile.site
 
 # Extra packages
-RUN R -e "install.packages(c('tidyverse', 'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr', 'arrow'), repos='https://cran.microsoft.com/snapshot/%%MRAN_SNAPSHOT_DATE%%/')"
+RUN R -e "install.packages(c('tidyverse', 'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr', 'arrow'), repos='https://cran.microsoft.com/snapshot/${MRAN_SNAPSHOT_DATE}/')"
 RUN R -e "library(arrow); arrow::install_arrow()"
 
 CMD ["r"]

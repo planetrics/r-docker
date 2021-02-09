@@ -18,12 +18,13 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
     if [ "${1:-}" = "--help" ]; then
         usage
     else
-        sed -e "s/%%R_BASE_VERSION%%/$R_BASE_VERSION/" \
-            -e "s/%%MRAN_SNAPSHOT_DATE%%/$MRAN_SNAPSHOT_DATE/" \
-            "Dockerfile.template" > Dockerfile
-
+        # Build R base image
         docker \
-            build -t "quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" .
+            build -f Dockerfile.base --build-arg MRAN_SNAPSHOT_DATE=$MRAN_SNAPSHOT_DATE --build-arg R_BASE_VERSION=$R_BASE_VERSION -t "quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" .
+
+        # Build RStudio atop this image
+         docker \
+            build -f Dockerfile.rstudio --build-arg BASE_IMG="quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" -t "quay.io/vividfinancepg/r-studio:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" .
 
         scripts/test
 
