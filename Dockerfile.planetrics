@@ -1,0 +1,26 @@
+# Docker build stage for Planetrics modelling workflow specifics (version control and Vivid legacy dependencies)
+# You need to have the SSH agent running locally and github ssh authentication set up for this to work
+# Example:  docker build -f Dockerfile.planetrics --ssh default --build-arg BASE_IMG=quay.io/vividfinancepg/r:3.6.3-2021-01-16 -t planetrics-model-test .
+# Must be run with DOCKER_BUILDKIT=1 in the environment (for secrets handling)
+ARG BASE_IMG
+FROM $BASE_IMG
+
+# Install python3 and RDRI CLI for data management and archiving
+# Use ssh forwarding from building client
+RUN apt-get update && apt-get install -y python3-pip  ssh-client
+RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+RUN --mount=type=ssh python3 -m pip install git+ssh://git@github.com/planetrics/rdri@v0.1
+
+# Vivid economics theme dependency is often used
+RUN R -e "install.packages(c('remotes')); library(remotes); remotes::install_git(\"https://gitlab.com/vivideconomics/business-development/vivid-r-theme.git\")"
+
+# Install AWS CLI - credentials need to be specified at runtime
+RUN apt-get update; apt-get install curl
+RUN wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -O "awscliv2.zip"
+RUN unzip awscliv2.zip
+RUN echo ${HOME}
+RUN mkdir ${HOME}/.aws
+RUN ./aws/install
+RUN rm awscliv2.zip
+CMD ["r"]
+

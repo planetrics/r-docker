@@ -19,12 +19,19 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
         usage
     else
         # Build R base image
+	base_img="quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE"
+	planetrics_img="quay.io/vividfinancepg/r-planetrics:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE"
+	rstudio_img="quay.io/vividfinancepg/r-studio:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE"
         docker \
-            build -f Dockerfile.base --build-arg MRAN_SNAPSHOT_DATE=$MRAN_SNAPSHOT_DATE --build-arg R_BASE_VERSION=$R_BASE_VERSION -t "quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" .
+            build -f Dockerfile.base --build-arg MRAN_SNAPSHOT_DATE=$MRAN_SNAPSHOT_DATE --build-arg R_BASE_VERSION=$R_BASE_VERSION -t $base_img .
 
-        # Build RStudio atop this image
+	# Build R Planetrics specifics atop this (using ssh forwarding to pull RDRI from private repo)
+        docker \
+	    build -f Dockerfile.planetrics --ssh default --build-arg BASE_IMG=$base_img -t $planetrics_img .
+
+	# Build RStudio atop the planetrics image
          docker \
-            build -f Dockerfile.rstudio --build-arg BASE_IMG="quay.io/vividfinancepg/r:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" -t "quay.io/vividfinancepg/r-studio:$R_BASE_VERSION-$MRAN_SNAPSHOT_DATE" .
+            build -f Dockerfile.rstudio --build-arg BASE_IMG=$planetrics_img -t $rstudio_img .
 
         scripts/test
 

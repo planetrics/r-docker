@@ -12,6 +12,7 @@ RUN apt-get update \
 		ca-certificates \
 		fonts-texgyre \
 		gnupg \
+                git-all \
 		dirmngr \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -55,15 +56,17 @@ RUN apt-get update && apt-get install -y \
     libxt-dev \
     libssh2-1-dev \
     libssl-dev \
-    libxml2-dev
+    libxml2-dev \
+    libgit2-dev
 
 RUN mkdir -p /usr/local/lib/R/etc/ && \
     echo \
 	"options(repos = c(CRAN='https://mran.microsoft.com/snapshot/${MRAN_SNAPSHOT_DATE}'))" >> /usr/lib/R/etc/Rprofile.site
 
-# Extra packages
-RUN R -e "install.packages(c('tidyverse', 'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr', 'arrow'), repos='https://cran.microsoft.com/snapshot/${MRAN_SNAPSHOT_DATE}/')"
-RUN R -e "library(arrow); arrow::install_arrow()"
+# Install common dependencies for modelling and data handling
+RUN R -e "install.packages(c('tidyverse', 'gridExtra', 'ggrepel', 'TTR', 'directlabels', 'stringdist', \
+                             'zoo', 'ggplot2', 'magrittr', 'tidyr', 'here', 'forcats', 'stringr', 'arrow'), \
+                           repos='https://cran.microsoft.com/snapshot/${MRAN_SNAPSHOT_DATE}/'); arrow::install_arrow()"
 
 CMD ["r"]
 
